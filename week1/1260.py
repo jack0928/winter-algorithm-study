@@ -15,7 +15,7 @@ def dfs(graph, node):
         visited[v] = True
         print(v, end=' ')
 
-        for child in reversed(graph[v]):
+        for child in reversed(graph[v]): #작은 번호 방문하려면 큰 번호부터 넣어야 해서 reversed
             if not visited[child]:
                 stack.append(child)
 
