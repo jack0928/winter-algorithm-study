@@ -24,7 +24,7 @@ def dijkstra(start):
     while q: #큐가 비어있지 않다면
         #최단 거리가 가장 짧은 노드에 대한 정보 꺼내기
         dist,now = heapq.heappop(q)
-        #현재 노드가 이미 처리된 적이 있는 노드라면 무시
+        #현재 노드가 이미 처리된 적이 있는 노드라면 무시 (이미 더 좋은 경로로 처리되었음)
         if distance[now] < dist:
             continue
         #현재 노드와 연결된 다른 인접한 노드들을 확인
