@@ -28,6 +28,14 @@ def find_parent(parent, x):
         parent[x] = find_parent(parent, parent[x]) #parent[x]에 값을 넣는 방식으로
     return parent[x]
 
+'''
+런타임에러 날 때는 재귀 없는 버전으로
+def find_parent(parent, x):
+    while parent[x] != x:
+        x = parent[x]
+    return x
+'''
+
 # 두 원소가 속한 집합을 합치기
 def union_parent(parent, a, b):
     a = find_parent(parent, a)
