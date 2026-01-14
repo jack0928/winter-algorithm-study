@@ -21,65 +21,85 @@ Ex) start -> v1 끝나고 초기화 후 v1 -> v2
 바로 틀림 -> 다익스트라는 아닌 것 같다
 
 
+맞는데 몇 가지 실수가 있었다.
+1. 코드 바꾸면서 visited랑 distance 초기화 누락
+2. v1,v2 말고 v2,v1도 가능한 거였다
+
 '''
+
+# [오답 원인 정리]
+# 이 코드는 다익스트라 알고리즘 자체의 문제가 아니라, 다익스트라를 여러 번 호출하면서
+# distance와 visited 배열을 매번 초기화하지 않고 재사용한 것이 문제였다. - 밥 먹으러 가면서 코드 수정하다가 생긴 문제
+# 이전 다익스트라 실행 결과가 다음 실행에 그대로 남아 있어 최단 거리 계산이 왜곡되었고,
+# 특히 visited 배열이 이미 True로 설정된 상태에서 다시 탐색을 시도해 정상적인 탐색이 불가능했다.
+# 다익스트라는 각 시작 정점마다 독립적인 최단 거리 계산이 필요하므로,
+# distance와 visited는 반드시 매 실행마다 새로 생성하거나 초기화해야 한다.
+
+
+# 다익스트라 알고리즘 (배열 기반)
+# - 매 단계마다 방문하지 않은 정점 중 최단 거리를 선형 탐색
+# - 시간 복잡도: O(V^2)
+# - 구현은 단순하지만, Python에서는 for문 중첩으로 인해 느릴 수 있음
+# - 정점 수가 작고 간선 수가 적을 때만 실용적
+
+# 개선 다익스트라 (우선순위 큐 / heapq 사용)
+# - 최단 거리 정점을 힙에서 바로 꺼냄
+# - 시간 복잡도: O(E log V)
+# - heap 연산은 C로 구현되어 Python에서도 매우 빠름
+# - 간선 수가 많거나 (E가 큼), BOJ 그래프 문제에서 표준적인 선택
 import sys
+import heapq
 input = sys.stdin.readline
 INF = int(1e9)
 
-n,e = map(int, input().split())
+n, e = map(int, input().split())
 graph = [[] for _ in range(n+1)]
-visited = [False] * (n+1)
-distance = [INF] * (n+1)
-
-total_distance = 0
 
 for _ in range(e):
-    a,b,c = map(int, input().split())
+    a, b, c = map(int, input().split())
     graph[a].append((b, c))
+    graph[b].append((a, c))
 
 v1, v2 = map(int, input().split())
 
-def get_smallest_node():
-    min_value = INF
-    index = 0
-    for i in range(1, n+1):
-        if distance[i] < min_value and not visited[i]:
-            min_value = distance[i]
-            index = i
 
-    return index
-
-#다익스트라 알고리즘
+# 개선 다익스트라 (heapq 사용)
 def dijkstra(start):
+    distance = [INF] * (n+1)
+    pq = []
+
     distance[start] = 0
-    visited[start] = True
-    for j in graph[start]:
-        distance[j[0]] = j[1]
+    heapq.heappush(pq, (0, start))
 
-    for i in range(n-1):
-        now = get_smallest_node()
-        visited[now] = True
-        for j in graph[now]:
-            cost = distance[now] + j[1]
-            if cost < distance[j[0]]:
-                distance[j[0]] = cost
+    while pq:
+        dist, now = heapq.heappop(pq)
 
+        # 이미 더 짧은 경로가 있으면 무시
+        if distance[now] < dist:
+            continue
 
-route = [(1,v1), (v1,v2), (v2,n)]
-error_flag = 0
+        for nxt, cost in graph[now]:
+            new_cost = dist + cost
+            if new_cost < distance[nxt]:
+                distance[nxt] = new_cost
+                heapq.heappush(pq, (new_cost, nxt))
 
-for start, end in route:
-    dijkstra(start)
-    if distance[end] != INF:
-        total_distance += distance[end]
-    else:
-        print(-1)
-        error_flag = 1
-        break
+    return distance
 
+# 3번만 다익스트라 실행
+dist_from_1 = dijkstra(1)
+dist_from_v1 = dijkstra(v1)
+dist_from_v2 = dijkstra(v2)
 
-if error_flag == 0:
-    print(total_distance)
+# 경로 1: 1 → v1 → v2 → n
+path1 = dist_from_1[v1] + dist_from_v1[v2] + dist_from_v2[n]
+
+# 경로 2: 1 → v2 → v1 → n
+path2 = dist_from_1[v2] + dist_from_v2[v1] + dist_from_v1[n]
+
+answer = min(path1, path2)
+
+print(answer if answer < INF else -1)
 
 '''
 dijkstra(1)
