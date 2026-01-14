@@ -1,4 +1,5 @@
-#heap을 사용해서 최단 거리가 가장 짧은 노드를 선형 탐색보다 빠르게 찾는다: O(V^2) -> O(ElogV), E는 간선의 개수
+# 시간복잡도 O(ElogV) : E는 간선의 개수
+# heap을 사용해서 최단 거리가 가장 짧은 노드를 선형 탐색보다 빠르게 찾는다: O(V^2) -> O(ElogV), E는 간선의 개수
 import heapq
 import sys
 input = sys.stdin.readline

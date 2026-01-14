@@ -19,8 +19,6 @@
 -> 사이클이 발생하지 안을 때만 MST에 포함
 3. 모든 간선에 2번 과정 반복 적용
 '''
-from encodings.punycode import decode_generalized_number
-
 
 # 특정 원소가 속한 집합을 찾기
 def find_parent(parent, x):
