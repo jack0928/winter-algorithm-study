@@ -124,7 +124,16 @@ if start_first_yes == end:
     ans.append(ans1)
 if start_first_no == end:
     ans.append(ans2)
+print(ans1,ans2)
 if len(ans) == 0:
     print(-1)
 else:
     print(min(ans))
+
+'''
+-1 나오는 경우
+5
+00101
+11111
+
+'''
